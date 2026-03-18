@@ -1,1 +1,142 @@
-# hh
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Landing</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: #0f0f0f;
+      color: white;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 40px 20px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 50px;
+    }
+
+    header h1 {
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    .hero {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 40px;
+    }
+
+    .hero-text {
+      flex: 1;
+    }
+
+    .hero-text h2 {
+      font-size: 40px;
+      margin-bottom: 15px;
+    }
+
+    .hero-text p {
+      color: #aaa;
+      margin-bottom: 25px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 14px 28px;
+      background: #5865F2;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      background: #4752c4;
+    }
+
+    .hero-img {
+      flex: 1;
+      text-align: center;
+    }
+
+    .hero-img img {
+      max-width: 100%;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 80px;
+      color: #666;
+      font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+      .hero {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .hero-text h2 {
+        font-size: 28px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <header>
+      <h1>Adam Store</h1>
+    </header>
+
+    <section class="hero">
+      
+      <div class="hero-text">
+        <h2>Produk Premium, Simple & Powerful</h2>
+        <p>
+          Solusi terbaik untuk kebutuhan kamu. Desain modern, performa tinggi,
+          dan mudah digunakan.
+        </p>
+
+        <a href="https://discord.gg/yourlink" target="_blank" class="btn">
+          Beli via Discord
+        </a>
+      </div>
+
+      <div class="hero-img">
+        <img src="https://via.placeholder.com/500x500.png?text=Produk+Kamu" alt="Produk">
+      </div>
+
+    </section>
+
+    <footer>
+      © 2026 Adam Store. All rights reserved.
+    </footer>
+
+  </div>
+
+</body>
+</html>
