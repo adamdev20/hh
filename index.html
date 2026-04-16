@@ -3,113 +3,226 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Discord Webhook Sender</title>
+<title>Webhook Terminal</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
 
 <style>
+
 body{
-background: linear-gradient(135deg,#0f172a,#020617);
-font-family: ui-sans-serif;
+background:#0c0c0c;
+font-family: Consolas, monospace;
 }
 
-.glass{
-backdrop-filter: blur(20px);
-background: rgba(255,255,255,0.05);
-border:1px solid rgba(255,255,255,0.1);
+.cursor{
+display:inline-block;
+width:10px;
+background:#fff;
+animation:blink 1s infinite;
 }
+
+@keyframes blink{
+0%{opacity:1}
+50%{opacity:0}
+100%{opacity:1}
+}
+
 </style>
-
 </head>
-<body class="flex items-center justify-center min-h-screen text-white">
 
-<div class="glass w-full max-w-lg rounded-2xl p-8 shadow-2xl">
+<body class="text-green-400 flex justify-center items-center min-h-screen">
 
-<h1 class="text-3xl font-bold mb-6 text-center tracking-wide">
-Discord Webhook Sender
-</h1>
+<div class="w-full max-w-4xl h-[80vh] bg-black border border-green-500 shadow-2xl rounded-lg flex flex-col">
 
-<label class="text-sm opacity-70">Webhook URL</label>
-<input
-id="webhook"
-class="w-full p-3 mt-1 mb-4 rounded-lg bg-slate-900 outline-none focus:ring-2 focus:ring-indigo-500"
-placeholder="https://discord.com/api/webhooks/...">
-
-<label class="text-sm opacity-70">Username</label>
-<input
-id="username"
-class="w-full p-3 mt-1 mb-4 rounded-lg bg-slate-900 outline-none focus:ring-2 focus:ring-indigo-500"
-placeholder="Bot aesthetic kamu">
-
-<label class="text-sm opacity-70">Pesan</label>
-<textarea
-id="message"
-class="w-full p-3 mt-1 mb-4 rounded-lg bg-slate-900 outline-none focus:ring-2 focus:ring-indigo-500"
-rows="4"
-placeholder="Ketik pesan disini..."></textarea>
-
-<button
-onclick="sendWebhook()"
-class="w-full bg-indigo-600 hover:bg-indigo-500 transition rounded-lg py-3 font-semibold">
-
-Kirim Pesan 🚀
-
-</button>
-
-<p id="status" class="text-center mt-4 opacity-70 text-sm"></p>
-
-<div class="mt-6 text-xs text-center opacity-40">
-preview realtime ↓
+<div class="bg-green-500 text-black px-4 py-2 font-bold">
+Windows PowerShell - Discord Webhook Sender
 </div>
 
-<div id="preview"
-class="mt-2 p-4 bg-slate-900 rounded-lg text-sm opacity-80">
-Pesan akan tampil di sini...
+<div id="terminal" class="flex-1 overflow-y-auto p-4 text-sm space-y-1"></div>
+
+<div class="flex px-4 pb-4">
+
+<span class="mr-2">PS C:\Webhook&gt;</span>
+
+<input
+id="command"
+class="flex-1 bg-transparent outline-none"
+autofocus
+/>
+
+<span class="cursor"></span>
+
 </div>
 
 </div>
 
 <script>
 
-const messageInput = document.getElementById("message")
-const previewBox = document.getElementById("preview")
+const terminal = document.getElementById("terminal")
+const input = document.getElementById("command")
 
-messageInput.addEventListener("input",()=>{
-previewBox.innerText = messageInput.value || "Pesan akan tampil di sini..."
-})
+let webhookURL=""
+let username="TerminalBot"
+let avatar=""
+let history=[]
+let historyIndex=0
 
-async function sendWebhook(){
-
-const webhook = document.getElementById("webhook").value
-const username = document.getElementById("username").value
-const message = document.getElementById("message").value
-const status = document.getElementById("status")
-
-if(!webhook || !message){
-status.innerText="Webhook dan pesan wajib diisi ⚠️"
-return
+function log(text){
+terminal.innerHTML += `<div>${text}</div>`
+terminal.scrollTop = terminal.scrollHeight
 }
 
-status.innerText="Mengirim..."
+function save(){
+localStorage.setItem("webhook",webhookURL)
+}
 
-try{
+function load(){
+webhookURL=localStorage.getItem("webhook")||""
+}
 
-await fetch(webhook,{
+load()
+
+log("Webhook Terminal Ready")
+log("ketik 'help' untuk daftar command")
+
+input.addEventListener("keydown", async e=>{
+
+if(e.key==="Enter"){
+
+const cmd=input.value
+history.push(cmd)
+historyIndex=history.length
+
+log("PS > "+cmd)
+
+await run(cmd)
+
+input.value=""
+
+}
+
+if(e.key==="ArrowUp"){
+historyIndex--
+if(historyIndex>=0)
+input.value=history[historyIndex]
+}
+
+if(e.key==="ArrowDown"){
+historyIndex++
+if(historyIndex<history.length)
+input.value=history[historyIndex]
+}
+
+})
+
+async function run(command){
+
+const args=command.split(" ")
+
+switch(args[0]){
+
+case "help":
+
+log("COMMAND LIST:")
+log("seturl [url]")
+log("setname [name]")
+log("setavatar [url]")
+log("send [message]")
+log("embed title|desc|color")
+log("clear")
+break
+
+
+case "seturl":
+
+webhookURL=args[1]
+save()
+
+log("Webhook URL saved")
+break
+
+
+case "setname":
+
+username=args.slice(1).join(" ")
+log("Username updated")
+break
+
+
+case "setavatar":
+
+avatar=args[1]
+log("Avatar updated")
+break
+
+
+case "send":
+
+if(!webhookURL){
+
+log("Webhook belum di set")
+return
+
+}
+
+const message=args.slice(1).join(" ")
+
+await fetch(webhookURL,{
 method:"POST",
 headers:{
 "Content-Type":"application/json"
 },
 body:JSON.stringify({
-username: username || "Webhook Sender",
-content: message
+username,
+avatar_url:avatar,
+content:message
 })
 })
 
-status.innerText="Pesan berhasil dikirim ✅"
+log("Message sent")
+break
 
-}catch(err){
 
-status.innerText="Gagal kirim ❌"
+case "embed":
+
+if(!webhookURL){
+
+log("Webhook belum di set")
+return
+
+}
+
+const embedData=command.replace("embed ","").split("|")
+
+await fetch(webhookURL,{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+username,
+avatar_url:avatar,
+embeds:[{
+title:embedData[0],
+description:embedData[1],
+color:Number(embedData[2])
+}]
+})
+})
+
+log("Embed sent")
+break
+
+
+case "clear":
+
+terminal.innerHTML=""
+break
+
+
+default:
+
+log("Unknown command")
 
 }
 
