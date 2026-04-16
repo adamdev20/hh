@@ -1,168 +1,117 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Discord Webhook Sender</title>
 
+<script src="https://cdn.tailwindcss.com"></script>
+
 <style>
-
-body {
-background:#0d1117;
-font-family:system-ui;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-margin:0;
-color:white;
+body{
+background: linear-gradient(135deg,#0f172a,#020617);
+font-family: ui-sans-serif;
 }
 
-.container {
-background:#161b22;
-padding:30px;
-border-radius:14px;
-width:430px;
-box-shadow:0 0 20px rgba(0,0,0,.4);
+.glass{
+backdrop-filter: blur(20px);
+background: rgba(255,255,255,0.05);
+border:1px solid rgba(255,255,255,0.1);
 }
-
-.title {
-text-align:center;
-font-size:22px;
-margin-bottom:20px;
-font-weight:600;
-}
-
-input, textarea {
-width:100%;
-background:#0d1117;
-border:1px solid #30363d;
-border-radius:8px;
-padding:12px;
-color:white;
-margin-top:10px;
-outline:none;
-}
-
-textarea {
-height:120px;
-resize:none;
-}
-
-.toolbar {
-margin-top:10px;
-}
-
-.toolbar button {
-background:#21262d;
-border:none;
-color:white;
-padding:6px 10px;
-margin:3px;
-border-radius:6px;
-cursor:pointer;
-font-size:13px;
-}
-
-.toolbar button:hover {
-background:#30363d;
-}
-
-.sendBtn {
-margin-top:15px;
-width:100%;
-background:#5865F2;
-border:none;
-padding:12px;
-border-radius:10px;
-color:white;
-font-size:15px;
-cursor:pointer;
-}
-
-.sendBtn:hover {
-background:#4752C4;
-}
-
-.status {
-text-align:center;
-margin-top:10px;
-font-size:13px;
-opacity:.8;
-}
-
 </style>
+
 </head>
+<body class="flex items-center justify-center min-h-screen text-white">
 
-<body>
+<div class="glass w-full max-w-lg rounded-2xl p-8 shadow-2xl">
 
-<div class="container">
-
-<div class="title">
+<h1 class="text-3xl font-bold mb-6 text-center tracking-wide">
 Discord Webhook Sender
-</div>
+</h1>
 
-<input id="webhook" placeholder="Webhook URL">
+<label class="text-sm opacity-70">Webhook URL</label>
+<input
+id="webhook"
+class="w-full p-3 mt-1 mb-4 rounded-lg bg-slate-900 outline-none focus:ring-2 focus:ring-indigo-500"
+placeholder="https://discord.com/api/webhooks/...">
 
-<textarea id="message" placeholder="Write your message..."></textarea>
+<label class="text-sm opacity-70">Username</label>
+<input
+id="username"
+class="w-full p-3 mt-1 mb-4 rounded-lg bg-slate-900 outline-none focus:ring-2 focus:ring-indigo-500"
+placeholder="Bot aesthetic kamu">
 
-<div class="toolbar">
+<label class="text-sm opacity-70">Pesan</label>
+<textarea
+id="message"
+class="w-full p-3 mt-1 mb-4 rounded-lg bg-slate-900 outline-none focus:ring-2 focus:ring-indigo-500"
+rows="4"
+placeholder="Ketik pesan disini..."></textarea>
 
-<button onclick="formatText('> ')">Quote</button>
-<button onclick="formatText('**','**')">Bold</button>
-<button onclick="formatText('*','*')">Italic</button>
-<button onclick="formatText('```','```')">Code</button>
-<button onclick="formatText('@everyone ')">@everyone</button>
+<button
+onclick="sendWebhook()"
+class="w-full bg-indigo-600 hover:bg-indigo-500 transition rounded-lg py-3 font-semibold">
 
-</div>
+Kirim Pesan 🚀
 
-<button class="sendBtn" onclick="sendWebhook()">
-Send Message
 </button>
 
-<div class="status" id="status"></div>
+<p id="status" class="text-center mt-4 opacity-70 text-sm"></p>
+
+<div class="mt-6 text-xs text-center opacity-40">
+preview realtime ↓
+</div>
+
+<div id="preview"
+class="mt-2 p-4 bg-slate-900 rounded-lg text-sm opacity-80">
+Pesan akan tampil di sini...
+</div>
 
 </div>
 
 <script>
 
-function formatText(prefix, suffix="") {
+const messageInput = document.getElementById("message")
+const previewBox = document.getElementById("preview")
 
-let textarea=document.getElementById("message")
+messageInput.addEventListener("input",()=>{
+previewBox.innerText = messageInput.value || "Pesan akan tampil di sini..."
+})
 
-let start=textarea.selectionStart
-let end=textarea.selectionEnd
+async function sendWebhook(){
 
-let selected=textarea.value.substring(start,end)
+const webhook = document.getElementById("webhook").value
+const username = document.getElementById("username").value
+const message = document.getElementById("message").value
+const status = document.getElementById("status")
 
-textarea.value=
-textarea.value.substring(0,start)
-+ prefix
-+ selected
-+ suffix
-+ textarea.value.substring(end)
-
+if(!webhook || !message){
+status.innerText="Webhook dan pesan wajib diisi ⚠️"
+return
 }
 
-function sendWebhook() {
+status.innerText="Mengirim..."
 
-let webhook=document.getElementById("webhook").value
-let message=document.getElementById("message").value
+try{
 
-fetch(webhook,{
+await fetch(webhook,{
 method:"POST",
 headers:{
 "Content-Type":"application/json"
 },
 body:JSON.stringify({
-content:message
+username: username || "Webhook Sender",
+content: message
 })
 })
-.then(()=>{
-document.getElementById("status").innerText="Message sent ✅"
-})
-.catch(()=>{
-document.getElementById("status").innerText="Failed ❌"
-})
+
+status.innerText="Pesan berhasil dikirim ✅"
+
+}catch(err){
+
+status.innerText="Gagal kirim ❌"
+
+}
 
 }
 
