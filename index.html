@@ -3,230 +3,194 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Webhook Terminal</title>
+<title>Landing Page Jualan</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
 
 <style>
-
-body{
-background:#0c0c0c;
-font-family: Consolas, monospace;
+html {
+scroll-behavior: smooth;
 }
 
-.cursor{
-display:inline-block;
-width:10px;
-background:#fff;
-animation:blink 1s infinite;
+.fade-up {
+opacity:0;
+transform:translateY(40px);
+transition:.8s ease;
 }
 
-@keyframes blink{
-0%{opacity:1}
-50%{opacity:0}
-100%{opacity:1}
+.fade-up.show {
+opacity:1;
+transform:translateY(0);
 }
-
 </style>
+
 </head>
+<body class="bg-gray-50 font-sans">
 
-<body class="text-green-400 flex justify-center items-center min-h-screen">
+<!-- NAVBAR -->
+<nav class="bg-white shadow fixed w-full z-50">
+<div class="max-w-6xl mx-auto flex justify-between items-center p-4">
 
-<div class="w-full max-w-4xl h-[80vh] bg-black border border-green-500 shadow-2xl rounded-lg flex flex-col">
+<h1 class="font-bold text-xl text-green-600">
+AdamStore
+</h1>
 
-<div class="bg-green-500 text-black px-4 py-2 font-bold">
-Windows PowerShell - Discord Webhook Sender
-</div>
-
-<div id="terminal" class="flex-1 overflow-y-auto p-4 text-sm space-y-1"></div>
-
-<div class="flex px-4 pb-4">
-
-<span class="mr-2">PS C:\Webhook&gt;</span>
-
-<input
-id="command"
-class="flex-1 bg-transparent outline-none"
-autofocus
-/>
-
-<span class="cursor"></span>
+<a href="#order"
+class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition">
+Order Sekarang
+</a>
 
 </div>
+</nav>
+
+
+<!-- HERO -->
+<section class="pt-28 pb-20 text-center">
+
+<h2 class="text-4xl md:text-5xl font-bold mb-6 fade-up">
+Produk Digital Terbaik 🔥
+</h2>
+
+<p class="text-gray-600 max-w-xl mx-auto mb-8 fade-up">
+Solusi cepat, murah, dan terpercaya untuk kebutuhan kamu.
+Order sekarang langsung via WhatsApp.
+</p>
+
+<a href="#order"
+class="bg-green-500 text-white px-8 py-4 rounded-xl text-lg hover:bg-green-600 transition fade-up">
+Pesan Sekarang
+</a>
+
+</section>
+
+
+<!-- PRODUK -->
+<section class="py-16 bg-white">
+
+<div class="max-w-6xl mx-auto px-6">
+
+<h3 class="text-3xl font-bold text-center mb-10 fade-up">
+Kenapa Pilih Produk Kami?
+</h3>
+
+<div class="grid md:grid-cols-3 gap-8">
+
+<div class="p-6 shadow rounded-xl fade-up">
+<h4 class="font-bold text-xl mb-2">⚡ Instan</h4>
+<p>Proses cepat tanpa ribet langsung kirim.</p>
+</div>
+
+<div class="p-6 shadow rounded-xl fade-up">
+<h4 class="font-bold text-xl mb-2">💰 Murah</h4>
+<p>Harga bersahabat kualitas tetap premium.</p>
+</div>
+
+<div class="p-6 shadow rounded-xl fade-up">
+<h4 class="font-bold text-xl mb-2">🔒 Aman</h4>
+<p>Transaksi terpercaya dan support cepat.</p>
+</div>
 
 </div>
+
+</div>
+
+</section>
+
+
+<!-- TESTIMONI -->
+<section class="py-16">
+
+<div class="max-w-6xl mx-auto px-6">
+
+<h3 class="text-3xl font-bold text-center mb-10 fade-up">
+Testimoni Customer
+</h3>
+
+<div class="grid md:grid-cols-3 gap-6">
+
+<div class="bg-white shadow p-6 rounded-xl fade-up">
+⭐⭐⭐⭐⭐
+<p>Pelayanan cepat banget recommended!</p>
+</div>
+
+<div class="bg-white shadow p-6 rounded-xl fade-up">
+⭐⭐⭐⭐⭐
+<p>Harga murah kualitas mantap.</p>
+</div>
+
+<div class="bg-white shadow p-6 rounded-xl fade-up">
+⭐⭐⭐⭐⭐
+<p>Admin responsif dan ramah.</p>
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- CTA WHATSAPP -->
+<section id="order"
+class="bg-green-500 text-white text-center py-20">
+
+<h2 class="text-3xl font-bold mb-6 fade-up">
+Siap Order Sekarang?
+</h2>
+
+<p class="mb-8 fade-up">
+Klik tombol di bawah untuk langsung chat admin.
+</p>
+
+<button
+onclick="orderNow()"
+class="bg-white text-green-600 px-10 py-4 rounded-xl font-bold hover:scale-105 transition fade-up">
+
+Chat WhatsApp Sekarang
+
+</button>
+
+</section>
+
+
+<!-- FOOTER -->
+<footer class="text-center py-6 bg-gray-100">
+© 2026 AdamStore
+</footer>
+
+
 
 <script>
 
-const terminal = document.getElementById("terminal")
-const input = document.getElementById("command")
+const phoneNumber = "6281234567890";
 
-let webhookURL=""
-let username="TerminalBot"
-let avatar=""
-let history=[]
-let historyIndex=0
+function orderNow() {
 
-function log(text){
-terminal.innerHTML += `<div>${text}</div>`
-terminal.scrollTop = terminal.scrollHeight
-}
+const message =
+"Halo kak saya mau order produk nya";
 
-function save(){
-localStorage.setItem("webhook",webhookURL)
-}
-
-function load(){
-webhookURL=localStorage.getItem("webhook")||""
-}
-
-load()
-
-log("Webhook Terminal Ready")
-log("ketik 'help' untuk daftar command")
-
-input.addEventListener("keydown", async e=>{
-
-if(e.key==="Enter"){
-
-const cmd=input.value
-history.push(cmd)
-historyIndex=history.length
-
-log("PS > "+cmd)
-
-await run(cmd)
-
-input.value=""
+window.open(
+`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`,
+"_blank"
+);
 
 }
 
-if(e.key==="ArrowUp"){
-historyIndex--
-if(historyIndex>=0)
-input.value=history[historyIndex]
+
+const observer = new IntersectionObserver(entries => {
+
+entries.forEach(entry => {
+
+if(entry.isIntersecting) {
+entry.target.classList.add("show");
 }
 
-if(e.key==="ArrowDown"){
-historyIndex++
-if(historyIndex<history.length)
-input.value=history[historyIndex]
-}
+});
 
-})
+});
 
-async function run(command){
-
-const args=command.split(" ")
-
-switch(args[0]){
-
-case "help":
-
-log("COMMAND LIST:")
-log("seturl [url]")
-log("setname [name]")
-log("setavatar [url]")
-log("send [message]")
-log("embed title|desc|color")
-log("clear")
-break
-
-
-case "seturl":
-
-webhookURL=args[1]
-save()
-
-log("Webhook URL saved")
-break
-
-
-case "setname":
-
-username=args.slice(1).join(" ")
-log("Username updated")
-break
-
-
-case "setavatar":
-
-avatar=args[1]
-log("Avatar updated")
-break
-
-
-case "send":
-
-if(!webhookURL){
-
-log("Webhook belum di set")
-return
-
-}
-
-const message=args.slice(1).join(" ")
-
-await fetch(webhookURL,{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-username,
-avatar_url:avatar,
-content:message
-})
-})
-
-log("Message sent")
-break
-
-
-case "embed":
-
-if(!webhookURL){
-
-log("Webhook belum di set")
-return
-
-}
-
-const embedData=command.replace("embed ","").split("|")
-
-await fetch(webhookURL,{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-username,
-avatar_url:avatar,
-embeds:[{
-title:embedData[0],
-description:embedData[1],
-color:Number(embedData[2])
-}]
-})
-})
-
-log("Embed sent")
-break
-
-
-case "clear":
-
-terminal.innerHTML=""
-break
-
-
-default:
-
-log("Unknown command")
-
-}
-
-}
+document.querySelectorAll(".fade-up")
+.forEach(el => observer.observe(el));
 
 </script>
 
